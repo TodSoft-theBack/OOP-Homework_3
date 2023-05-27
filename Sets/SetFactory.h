@@ -5,6 +5,7 @@
 #include "Set.h"
 #include "BasicSet.h"
 #include "SetByCriteria.h"
+#include "SetCriteria.h"
 #include "IntersectionSet.h"
 #include "UnionSet.h"
 
@@ -18,6 +19,7 @@ class SetFactory
         SetFactory(const char* filename);
         SetFactory(uint16_t type, const int32_t* elements, uint16_t count);
         SetFactory(uint16_t type, const String* elements, uint16_t count);
+        const Set* SetPtr() const;
         void SaveToFile(const char* filename);
         Set* ReadFromFile(const char* filename);
 

@@ -46,6 +46,11 @@ SetFactory::SetFactory(uint16_t type, const String* elements, uint16_t count)
     }
 }
 
+const Set* SetFactory::SetPtr() const
+{
+    return set;
+}
+
 void SetFactory::SaveToFile(const char* filename)
 {
     set->SaveToFile(filename);
@@ -77,7 +82,7 @@ Set* SetFactory::ReadFromFile(const char* filename)
         case 1:
         case 2:
             file.read((char*)&elements, sizeof(uint32_t) * N);
-            set = new SetByCriteria(std::move(SetCriteria(T == 2, elements, N)));
+            return new SetByCriteria(std::move(SetCriteria(T == 2, elements, N)));
         break;
 
             for (size_t i = 0; i < N; i++)
