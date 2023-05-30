@@ -12,8 +12,6 @@ class SetByCriteria : public Set
         static const uint16_t TYPES[2];
         SetByCriteria(const SetCriteria& criteria);
         bool Contains(int32_t element) const override;
-        void PrintInInterval(int a, int b) const override;
-        void PrintNext(unsigned current) const override;
         void SaveToFile(const char* filename) const override;
         ~SetByCriteria() = default;
 };

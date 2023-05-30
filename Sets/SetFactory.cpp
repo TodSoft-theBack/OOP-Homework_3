@@ -24,20 +24,20 @@ SetFactory::SetFactory(uint16_t type, const int32_t* elements, uint16_t count)
     }
 }
 
-SetFactory::SetFactory(uint16_t type, const String* elements, uint16_t count)
+SetFactory::SetFactory(uint16_t type, const char* elements[], uint16_t count)
 {
     Set* sets[Set::MAX_ELEMENT_COUNT] = {nullptr};
     for (size_t i = 0; i < count; i++)
-        sets[i] = ReadFromFile(elements[i].C_Str());
+        sets[i] = ReadFromFile(elements[i]);
     
     switch (type)
     {
         case 3:
-            set = new UnionSet(sets);
+            set = new UnionSet(sets, count);
         break;
 
         case 4:
-            set = new IntersectionSet(sets);
+            set = new IntersectionSet(sets, count);
         break;
 
         default:
@@ -60,7 +60,12 @@ Set* SetFactory::ReadFromFile(const char* filename)
 {
     if (file.is_open())
         file.close();
+
     file.open(filename, std::ios::in | std::ios::binary);
+
+    if (!file.is_open())
+        throw std::runtime_error("Problem opening file!!!");
+    
     uint16_t N = 0, T = 0;
     file.read((char*)&N, sizeof(N));
     if (N > Set::MAX_ELEMENT_COUNT)
@@ -85,21 +90,30 @@ Set* SetFactory::ReadFromFile(const char* filename)
             return new SetByCriteria(std::move(SetCriteria(T == 2, elements, N)));
         break;
 
+            
+        case 3:
             for (size_t i = 0; i < N; i++)
                 file >> filenames[i];
             
             for (uint16_t i = 0; i < N; i++)
                 sets[i] = ReadFromFile(filenames[i].C_Str());
-        case 3:    
-            return new UnionSet(sets);
+            return new UnionSet(sets, N);
 
         case 4:
-            return new IntersectionSet(sets);
+            char buffer[1024];
+            for (uint16_t i = 0; i < N; i++)
+            {
+                file.getline(buffer, 1024, '\0');
+                filenames[i] = buffer;
+            }
+            for (uint16_t i = 0; i < N; i++)
+                sets[i] = ReadFromFile(filenames[i].C_Str());
+            return new IntersectionSet(sets, N);
 
         default:
-            break;
+            throw std::runtime_error("File contains invalid set type!!");
     }
-    return nullptr;
+    return set;
 }
 
 SetFactory::~SetFactory()

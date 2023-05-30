@@ -11,8 +11,6 @@ class BasicSet : public Set
         BasicSet(const int32_t* elements, uint16_t count);
         void Add(int32_t element);
         bool Contains(int32_t element) const override;
-        void PrintInInterval(int a, int b) const override;
-        void PrintNext(unsigned current) const override;
         void SaveToFile(const char* filename) const override;
         ~BasicSet() = default;
 };
